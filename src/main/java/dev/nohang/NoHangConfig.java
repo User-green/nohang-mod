@@ -31,15 +31,36 @@ public final class NoHangConfig {
 
     public static final ModConfigSpec.IntValue DELAY_SECONDS = BUILDER
             .comment("""
-                    Seconds to wait, after shutdown begins, before forcing the JVM to halt.
+                    Absolute upper bound, in seconds, from the start of shutdown to the forced halt.
+
+                    This is the outer backstop, not the normal trigger. In the normal case the
+                    watchdog halts postSaveDelaySeconds after the vanilla world save is confirmed
+                    durable (see below), which is much sooner. This bound only takes effect when
+                    that confirmation never arrives — e.g. if a future wedge moves ahead of the
+                    save instead of after it.
 
                     Must satisfy:  save duration  <<  delaySeconds  <<  TimeoutStopSec
 
                     Observed save time on hoyrent is ~3.4s and TimeoutStopSec is 30s, so the
                     default 15s gives ~4x margin over the save while still halting well before
-                    systemd's SIGKILL. Values below 10 trigger a WARN at load time — they are
-                    almost certainly too short to allow the world save to complete.""")
+                    systemd's SIGKILL. Values below 10 or above 25 trigger a WARN at load time.""")
             .defineInRange("delaySeconds", 15, 1, 600);
+
+    public static final ModConfigSpec.IntValue POST_SAVE_DELAY_SECONDS = BUILDER
+            .comment("""
+                    Seconds to wait after the vanilla world save is confirmed durable before
+                    halting. This is the normal trigger.
+
+                    "Durable" means MinecraftServer.saveAllChunks() has returned: every level's
+                    chunks are written and level.dat (written last) is on disk. The watchdog
+                    learns this from the first LevelEvent.Unload of the shutdown, which vanilla
+                    posts immediately after that call and immediately before ServerLevel.close()
+                    -- the call that actually wedges.
+
+                    The grace period exists because other mods do shutdown work after the vanilla
+                    save, in their own LevelEvent.Unload listeners and in ServerLevel.close().
+                    Raise it if such work needs longer; halting mid-flight cuts it off.""")
+            .defineInRange("postSaveDelaySeconds", 5, 0, 600);
 
     public static final ModConfigSpec.IntValue EXIT_CODE = BUILDER
             .comment("""
