@@ -1,24 +1,25 @@
 /*
  * NoHang — shutdown watchdog for a modded Minecraft server.
- * Copyright (C) 2026 nohang contributors
+ * Copyright (C) 2026 UserGreen
  *
  * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
+ * it under the terms of the GNU Affero General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
+ * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 package dev.nohang;
 
 import com.mojang.logging.LogUtils;
 
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -32,7 +33,9 @@ import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 
 import org.slf4j.Logger;
 
-@Mod(NoHangMod.MOD_ID)
+// Server-only: FML never constructs this class on a physical client. The
+// isDedicatedServer() checks below stay as a second guard.
+@Mod(value = NoHangMod.MOD_ID, dist = Dist.DEDICATED_SERVER)
 public class NoHangMod {
     public static final String MOD_ID = "nohang";
     private static final Logger LOG = LogUtils.getLogger();
