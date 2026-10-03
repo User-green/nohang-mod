@@ -38,3 +38,7 @@ run/
 **/src/generated/**/.cache/
 repo/
 !**/src/**/repo/
+
+### Private: diagnosis notes and raw thread dumps from the original server ###
+SPEC.md
+evidence/

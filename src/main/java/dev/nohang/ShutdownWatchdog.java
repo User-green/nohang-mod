@@ -164,14 +164,13 @@ final class ShutdownWatchdog {
 
         if (sawSave) {
             LOG.warn("JVM still alive {}s after shutdown began, {}s after the world save became durable. "
-                            + "Forcing halt — likely culprit: fucksable-1.6.8 mixin "
-                            + "SubLevelHoldingChunkMap.awaitBeforeClose (see SPEC.md evidence/).",
+                            + "Forcing halt. The thread dump (if enabled) shows what is blocking shutdown.",
                     elapsedSeconds(armedAtNanos), elapsedSeconds(saveCompleteNanos));
         } else {
             LOG.warn("Absolute bound of {}s reached and the vanilla world save was NEVER confirmed durable "
                             + "(no LevelEvent.Unload seen). The hang is ahead of the save, not after it, so "
-                            + "this halt may interrupt it — check world/level.dat and the region files, and "
-                            + "see SPEC.md §6. Forcing halt anyway; the supervisor would SIGKILL regardless.",
+                            + "this halt may interrupt it — check world/level.dat and the region files. "
+                            + "Forcing halt anyway; the supervisor would kill the server regardless.",
                     delaySeconds);
         }
 

@@ -109,12 +109,12 @@ builds the jar on GitHub Actions and attaches it to a GitHub release; the tag mu
 
 ## Background
 
-NoHang was written for one specific modpack server whose JVM hung on every stop. The
-diagnosis (thread dumps, measured save timings), the design, and the acceptance criteria are
-in [SPEC.md](SPEC.md); the raw thread dumps are in [`evidence/`](evidence/). In that pack the
-hang came from a mixin into Sable's chunk-map close path (`awaitBeforeClose`, joining a
-`CompletableFuture` that never completes), but NoHang does not depend on Sable or on that
-particular bug.
+NoHang was written for one specific modpack server whose JVM hung during shutdown. Thread
+dumps showed the world save finishing about 3.4 seconds after the stop command, followed by
+the server thread parked forever in a mixin on Sable's chunk-map close path
+(`awaitBeforeClose`, joining a `CompletableFuture` that never completes), with zero CPU and
+zero disk writes from then on. NoHang does not depend on Sable or on that particular bug: it
+only relies on vanilla's save finishing before the hang.
 
 Tested on that server (NeoForge 21.1.235, Java 25 runtime) with five consecutive
 stop/start cycles: every stop finished in about 10 to 12 seconds, the world save was

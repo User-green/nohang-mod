@@ -41,9 +41,10 @@ public final class NoHangConfig {
 
                     Must satisfy:  save duration  <<  delaySeconds  <<  TimeoutStopSec
 
-                    Observed save time on hoyrent is ~3.4s and TimeoutStopSec is 30s, so the
-                    default 15s gives ~4x margin over the save while still halting well before
-                    systemd's SIGKILL. Values below 10 or above 25 trigger a WARN at load time.""")
+                    On the server NoHang was written for, the save took ~3.4s and TimeoutStopSec
+                    was 30s, so the default 15s gives ~4x margin over the save while still halting
+                    well before systemd's SIGKILL. Values below 10 or above 25 trigger a WARN at
+                    load time.""")
             .defineInRange("delaySeconds", 15, 1, 600);
 
     public static final ModConfigSpec.IntValue POST_SAVE_DELAY_SECONDS = BUILDER
@@ -71,9 +72,8 @@ public final class NoHangConfig {
     public static final ModConfigSpec.BooleanValue DUMP_THREADS_BEFORE_HALT = BUILDER
             .comment("""
                     Log every thread's stack trace to logs/latest.log right before halting.
-                    Keeps the underlying wedge (fucksable-1.6.8 mixin
-                    SubLevelHoldingChunkMap.awaitBeforeClose) diagnosable rather than silently
-                    masked by the watchdog.""")
+                    Keeps whatever is blocking shutdown diagnosable rather than silently masked
+                    by the watchdog.""")
             .define("dumpThreadsBeforeHalt", true);
 
     public static final ModConfigSpec SPEC = BUILDER.build();

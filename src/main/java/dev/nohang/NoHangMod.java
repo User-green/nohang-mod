@@ -71,15 +71,15 @@ public class NoHangMod {
         int delay = NoHangConfig.DELAY_SECONDS.get();
         if (delay < 10) {
             LOG.warn("delaySeconds={} is implausibly low (<10). "
-                    + "World save time on hoyrent is ~3.4s; ensure delaySeconds exceeds it. "
-                    + "See SPEC.md §5 'Choosing delaySeconds'.", delay);
+                    + "A world save usually takes a few seconds; ensure delaySeconds comfortably "
+                    + "exceeds your server's save time.", delay);
         } else if (delay > 25) {
             // The bound is only useful if it fires before the supervisor gives up. Above the
             // unit's TimeoutStopSec the mod is a silent no-op: systemd SIGKILLs first and
             // nothing in the log says why.
             LOG.warn("delaySeconds={} is high. It must stay below the supervisor's stop timeout "
-                    + "(TimeoutStopSec is 30s on hoyrent) or the watchdog never fires and systemd "
-                    + "SIGKILLs as before. See SPEC.md §5 'Choosing delaySeconds'.", delay);
+                    + "(e.g. systemd's TimeoutStopSec) or the watchdog never fires and the server is "
+                    + "killed as before.", delay);
         }
         LOG.info("NoHang config {} ({}): enabled={}, delaySeconds={}, postSaveDelaySeconds={}, "
                         + "exitCode={}, dumpThreadsBeforeHalt={}",
