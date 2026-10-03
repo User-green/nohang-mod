@@ -116,6 +116,11 @@ the server thread parked forever in a mixin on Sable's chunk-map close path
 zero disk writes from then on. NoHang does not depend on Sable or on that particular bug: it
 only relies on vanilla's save finishing before the hang.
 
+The original diagnosis notes and raw thread dumps described that private server, so they
+were removed from the whole repository history before publication. That is why some early
+commit messages mention files that are not in the repository, and why one early commit is
+empty.
+
 Tested on that server (NeoForge 21.1.235, Java 25 runtime) with five consecutive
 stop/start cycles: every stop finished in about 10 to 12 seconds, the world save was
 confirmed before every halt, and the server restarted cleanly each time.
